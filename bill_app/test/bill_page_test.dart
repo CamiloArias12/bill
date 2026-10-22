@@ -70,14 +70,15 @@ class FakeClientService implements AbstractClientService {
 void main() {
   late FakeBillService billService;
 
-  setUp(() {
-    GetIt.I.reset();
+  setUp(() async {
+    await GetIt.I.reset();
     billService = FakeBillService();
+    final clientService = FakeClientService();
     GetIt.I.registerSingleton<StyleApp>(StyleAppImpl());
     GetIt.I.registerSingleton<AbstractBillService>(billService);
-    GetIt.I.registerSingleton<AbstractClientService>(FakeClientService());
-    GetIt.I.registerLazySingleton<BillBloc>(() => BillBloc());
-    GetIt.I.registerLazySingleton<ClientBloc>(() => ClientBloc());
+    GetIt.I.registerSingleton<AbstractClientService>(clientService);
+    GetIt.I.registerLazySingleton<BillBloc>(() => BillBloc(billService));
+    GetIt.I.registerLazySingleton<ClientBloc>(() => ClientBloc(clientService));
   });
 
   test('Bill.fromMap acepta enteros, nulos y estado en camelCase', () {

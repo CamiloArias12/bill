@@ -12,15 +12,24 @@ import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 
 Future<void> serviceLocatorSetup() async {
-  GetIt.I.registerSingleton<StyleApp>(StyleAppImpl());
-  GetIt.I.registerSingleton<AppConfig>(AppConfigImpl());
+  final getIt = GetIt.I;
 
-  final Dio dio = Dio();
-  GetIt.I.registerLazySingleton(() => dio);
-  GetIt.I.registerLazySingleton<AbstractApiService>(() => ApiService());
-  GetIt.I.registerLazySingleton<AbstractBillService>(() => BillService());
-  GetIt.I.registerLazySingleton<AbstractClientService>(() => ClientService());
+  getIt.registerSingleton<StyleApp>(StyleAppImpl());
+  getIt.registerSingleton<AppConfig>(AppConfigImpl());
+  getIt.registerSingleton<Dio>(Dio());
 
-  GetIt.I.registerLazySingleton<BillBloc>(() => BillBloc());
-  GetIt.I.registerLazySingleton<ClientBloc>(() => ClientBloc());
+  // Las dependencias se pasan por constructor; se registran en orden para no
+  // resolver lazy singletons de forma reentrante dentro de un constructor.
+  getIt.registerSingleton<AbstractApiService>(ApiService(getIt<Dio>()));
+  getIt.registerSingleton<AbstractBillService>(
+      BillService(getIt<AbstractApiService>(), getIt<AppConfig>()));
+  getIt.registerSingleton<AbstractClientService>(
+      ClientService(getIt<AbstractApiService>(), getIt<AppConfig>()));
+
+  // Dependencias resueltas antes y capturadas en el closure: el factory del
+  // lazy singleton no llama a get() durante su propia creación.
+  final billService = getIt<AbstractBillService>();
+  final clientService = getIt<AbstractClientService>();
+  getIt.registerLazySingleton<BillBloc>(() => BillBloc(billService));
+  getIt.registerLazySingleton<ClientBloc>(() => ClientBloc(clientService));
 }

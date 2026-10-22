@@ -24,3 +24,6 @@ dist-ssr
 *.sw?
 
 *.tsbuildinfo
+
+# Config local (no versionar)
+.env

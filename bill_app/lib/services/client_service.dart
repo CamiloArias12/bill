@@ -2,17 +2,14 @@ import 'package:bill_app/api/abstract_api_service.dart';
 import 'package:bill_app/config/app_config.dart';
 import 'package:bill_app/domain/entities/client.dart';
 import 'package:dio/dio.dart';
-import 'package:get_it/get_it.dart';
 
 class ClientService extends AbstractClientService {
-  late final AbstractApiService apiService;
-  late final AppConfig appConfig;
+  final AbstractApiService apiService;
+  final AppConfig appConfig;
   late final String apiRepositoryUrl;
 
-  ClientService() {
-    appConfig = GetIt.I.get<AppConfig>();
+  ClientService(this.apiService, this.appConfig) {
     apiRepositoryUrl = '${appConfig.apiUrl}/api/client';
-    apiService = GetIt.I.get<AbstractApiService>();
   }
 
   @override

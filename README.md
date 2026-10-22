@@ -152,6 +152,18 @@ Widgets principales: `BillSummary`, `BillCard`, `BillDetailSheet`, `StatusBadge`
 
 Con Docker basta un comando; no hace falta instalar .NET, Node ni MongoDB.
 
+### Configuración (variables de entorno)
+
+Con Docker todo sale del `.env` de la raíz; sin Docker cada app usa su propia config.
+
+| Ámbito | Con Docker | Sin Docker |
+|---|---|---|
+| API (.NET) | `.env` raíz → variables de entorno (sobrescriben `appsettings.json`) | `appsettings.json` o user-secrets |
+| Web (Vite) | `.env` raíz → build arg → se incrusta al compilar | `web/.env` |
+| Móvil (Flutter) | no se containeriza | `bill_app/lib/config/.env` (flutter_dotenv) |
+
+El móvil nunca usa el `.env` de la raíz. En la API, `__` mapea a claves anidadas (`EmailConfiguration__Host` → `EmailConfiguration:Host`); en la web solo se exponen las variables con prefijo `VITE_`. Cada `.env` real está en `.gitignore` y tiene su `.env.example`.
+
 ### Opción recomendada: Docker Compose
 
 ```bash

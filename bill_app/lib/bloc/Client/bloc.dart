@@ -4,13 +4,11 @@ import 'package:bill_app/domain/entities/client.dart';
 import 'package:bill_app/services/client_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get_it/get_it.dart';
 
 class ClientBloc extends Bloc<ClientEvent, ClientState> {
-  late final AbstractClientService clientService;
+  final AbstractClientService clientService;
 
-  ClientBloc() : super(ClientStartState()) {
-    clientService = GetIt.I.get<AbstractClientService>();
+  ClientBloc(this.clientService) : super(ClientStartState()) {
     on<ClientFetchEvent>(_fetchAllClient);
   }
 
