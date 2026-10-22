@@ -1,0 +1,15 @@
+@BillApi_HostAddress = http://localhost:5080
+
+GET {{BillApi_HostAddress}}/api/client
+Accept: application/json
+
+###
+
+GET {{BillApi_HostAddress}}/api/bill
+Accept: application/json
+
+###
+
+POST {{BillApi_HostAddress}}/api/bill/status
+
+###

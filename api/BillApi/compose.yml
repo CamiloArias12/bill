@@ -1,0 +1,19 @@
+services:
+  db:
+    image: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: "bill"
+      MONGO_INITDB_ROOT_PASSWORD: "123456"
+    ports:
+      - "27017:27017"
+    networks:
+      app:
+        ipv4_address: 10.24.0.2
+
+networks:
+  app:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.24.0.0/16
+          gateway: 10.24.0.1
