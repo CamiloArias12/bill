@@ -128,7 +128,7 @@ El asunto del correo es `Factura <código>: <nuevo estado>` y el saludo usa el n
 
 ## Aplicaciones web y móvil
 
-Las dos aplicaciones muestran el mismo resumen y pueden lanzar el proceso de recordatorios. La web está pensada para escritorio y la app para el teléfono.
+Las dos aplicaciones muestran el mismo resumen y pueden lanzar el proceso de recordatorios.
 
 | Funcionalidad | Web (React) | Móvil (Flutter) |
 |---|---|---|
@@ -138,7 +138,7 @@ Las dos aplicaciones muestran el mismo resumen y pueden lanzar el proceso de rec
 | Estado | Etiqueta de color por estado | Etiqueta de color por estado |
 | Enviar recordatorios | Botón para el cliente seleccionado o para todos; muestra facturas actualizadas y fallidas | Igual, con el resultado en una hoja inferior |
 
-**Web.** React 18 con TypeScript, Vite y Tailwind. Componentes principales: `BillSummary`, `BillTable`, `StatusBadge` y `ReminderResults`. En Docker se compila y se sirve con Nginx.
+**Web.** React 19 con TypeScript, Vite y Tailwind. Componentes principales: `BillSummary`, `BillTable`, `StatusBadge` y `ReminderResults`. En Docker se compila y se sirve con Nginx.
 
 **Móvil.** Flutter con clean architecture y estas librerías:
 
