@@ -1,6 +1,9 @@
 import 'dart:convert';
 
+import 'package:bill_app/domain/entities/bill_status.dart';
+
 class Bill {
+  String id;
   String billCode;
   double? billTotal;
   double? subtotal;
@@ -14,6 +17,7 @@ class Bill {
   String? clientId;
 
   Bill({
+    required this.id,
     required this.billCode,
     this.billTotal,
     this.subtotal,
@@ -27,17 +31,20 @@ class Bill {
     this.clientId,
   });
 
+  BillStatus? get billStatus => BillStatus.fromValue(status);
+
   factory Bill.fromJson(String json) => Bill.fromMap(jsonDecode(json));
 
   String toJson() => jsonEncode(toMap());
 
   factory Bill.fromMap(Map<String, dynamic> map) {
     return Bill(
+      id: map['id'],
       billCode: map['billCode'],
-      billTotal: double.parse(map['billTotal'].toString()),
-      subtotal: double.parse(map['subtotal'].toString()),
-      vat: double.parse(map['vat'].toString()),
-      withholding: double.parse(map['withholding'].toString()),
+      billTotal: (map['billTotal'] as num?)?.toDouble(),
+      subtotal: (map['subtotal'] as num?)?.toDouble(),
+      vat: (map['vat'] as num?)?.toDouble(),
+      withholding: (map['withholding'] as num?)?.toDouble(),
       creationDate: DateTime.parse(map['creationDate']),
       status: map['status'],
       city: map['city'],
@@ -51,6 +58,7 @@ class Bill {
 
   Map<String, dynamic> toMap() {
     return {
+      'id': id,
       'billCode': billCode,
       'billTotal': billTotal,
       'subtotal': subtotal,

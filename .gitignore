@@ -6,3 +6,6 @@ obj/
 TestResults/
 
 .DS_Store
+
+# Docker compose (credenciales SMTP)
+/.env

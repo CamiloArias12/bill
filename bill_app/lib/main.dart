@@ -29,7 +29,9 @@ class AppManager extends StatelessWidget {
               create: (BuildContext context) => GetIt.I.get<BillBloc>()),
         ],
         child: MaterialApp(
-          color: styleApp.primaryColor,
+          title: 'Facturas',
+          debugShowCheckedModeBanner: false,
+          theme: styleApp.theme,
           home: BillPage(),
         ));
   }

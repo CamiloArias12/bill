@@ -1,8 +1,8 @@
 import 'package:bill_app/bloc/Client/event.dart';
 import 'package:bill_app/bloc/Client/state.dart';
 import 'package:bill_app/domain/entities/client.dart';
-import 'package:bill_app/services/bill_service.dart';
 import 'package:bill_app/services/client_service.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:get_it/get_it.dart';
 
@@ -20,7 +20,7 @@ class ClientBloc extends Bloc<ClientEvent, ClientState> {
       List<Client> clients = await clientService.fetchAll();
       emit(ClientLoadedState(clients: clients));
     } catch (e) {
-      print(e);
+      debugPrint('$e');
       emit(ClientErrorState());
     }
   }

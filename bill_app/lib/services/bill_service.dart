@@ -1,6 +1,7 @@
 import 'package:bill_app/api/abstract_api_service.dart';
 import 'package:bill_app/config/app_config.dart';
 import 'package:bill_app/domain/entities/bill.dart';
+import 'package:bill_app/domain/entities/reminder_result.dart';
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 
@@ -18,16 +19,24 @@ class BillService implements AbstractBillService {
   @override
   Future<List<Bill>> fetchAll() async {
     Response response = await apiService.get(path: apiRepositoryUrl);
-    List<Bill> bills = [];
     final List<dynamic> listData = response.data;
-    for (var bill in listData) {
-      final Bill billNew = Bill.fromMap(bill);
-      bills.add(billNew);
+    return listData.map((bill) => Bill.fromMap(bill)).toList();
+  }
+
+  @override
+  Future<List<ReminderResult>> processReminders({String? clientId}) async {
+    if (clientId != null) {
+      Response response =
+          await apiService.post(path: '$apiRepositoryUrl/status/$clientId');
+      return [ReminderResult.fromMap(response.data)];
     }
-    return bills;
+    Response response = await apiService.post(path: '$apiRepositoryUrl/status');
+    final List<dynamic> listData = response.data;
+    return listData.map((result) => ReminderResult.fromMap(result)).toList();
   }
 }
 
 abstract class AbstractBillService {
   Future<List<Bill>> fetchAll();
+  Future<List<ReminderResult>> processReminders({String? clientId});
 }

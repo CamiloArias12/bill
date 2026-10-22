@@ -14,7 +14,7 @@ namespace BillApi.Infrastructure.Email
         public async Task<bool> SendEmail(EmailMessageDto message)
         {
             var email = new MimeMessage();
-            email.From.Add(MailboxAddress.Parse(_config.Username));
+            email.From.Add(MailboxAddress.Parse(string.IsNullOrWhiteSpace(_config.From) ? _config.Username : _config.From));
             email.To.Add(MailboxAddress.Parse(message.To));
             email.Subject = message.Subject;
             email.Body = new TextPart(TextFormat.Html) { Text = message.Body };

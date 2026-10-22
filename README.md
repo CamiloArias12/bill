@@ -18,7 +18,7 @@ Ecosistema de aplicaciones para la gestión de clientes, facturas y recordatorio
 | `api/` | .NET 8 Web API (C#), MongoDB, MailKit | Lógica de negocio, persistencia y envío de correos |
 | `api/BillApi.Tests` | xUnit + Moq | Pruebas unitarias |
 | `web/` | React + TypeScript + Vite + Tailwind | Resumen de facturas y ejecución del proceso |
-| `bill_app/` | Flutter | App móvil de consulta de facturas |
+| `bill_app/` | Flutter (BLoC + GetIt) | App móvil: resumen, detalle y envío de recordatorios |
 
 ## Arquitectura
 
@@ -99,11 +99,29 @@ Ejemplo de respuesta de `POST /api/bill/status/{clientId}`:
 
 ## Cómo ejecutar
 
+### Con Docker (todo el ecosistema)
+
+```bash
+docker compose up -d --build
+```
+
+| Servicio | URL |
+|---|---|
+| Web | http://localhost:5173 |
+| API (Swagger) | http://localhost:5080 |
+| MongoDB | `mongodb://bill:123456@localhost:27017` |
+| Mailpit (correos de prueba) | http://localhost:8025 |
+
+Por defecto la API envía los correos a Mailpit. Para usar un SMTP real, cree un archivo `.env` en la raíz (no se versiona) con `SMTP_HOST`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_PASSWORD` y `SMTP_FROM` (remitente verificado en el proveedor); hay un ejemplo en `.env.example`. Si la API se publica en otra URL, defina `VITE_API_URL` y reconstruya la imagen web (Vite la incrusta al compilar).
+
+Para borrar los datos de MongoDB: `docker compose down -v`.
+
+### Sin Docker
+
 ### 1. Base de datos
 
 ```bash
-cd api/BillApi
-docker compose up -d
+docker compose up -d db
 ```
 
 Al iniciar, la API crea 3 clientes con 3 facturas cada uno (2 en `primerrecordatorio`, 1 en `segundorecordatorio`) si la base está vacía.
@@ -160,3 +178,20 @@ La URL de la API se configura en `web/.env` (`VITE_API_URL`). La interfaz muestr
 - Filtro por cliente.
 - Botón **Enviar recordatorios**, que ejecuta el proceso para el cliente seleccionado o para todos, y muestra el resultado.
 - Tabla con el detalle de las facturas.
+
+### 6. App móvil (Flutter)
+
+```bash
+cd bill_app
+flutter pub get
+flutter test
+
+# Emulador Android: 10.0.2.2 es el localhost del computador
+flutter emulators --launch Pixel_8_API_36
+flutter run --dart-define=API_URL=http://10.0.2.2:5080
+
+# Dispositivo físico: usar la IP del computador en la red local
+flutter run --dart-define=API_URL=http://192.168.x.x:5080
+```
+
+La app muestra lo mismo que la web adaptado a móvil: filtro por cliente, tarjetas de resumen por estado (al tocarlas filtran), búsqueda, una tarjeta por factura con su detalle en una hoja inferior y el botón **Enviar recordatorios** con el resultado del proceso. En builds de depuración Android se permite HTTP para poder usar la API local.

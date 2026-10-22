@@ -1,0 +1,45 @@
+services:
+  db:
+    image: mongo:7
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: bill
+      MONGO_INITDB_ROOT_PASSWORD: "123456"
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build: ./api/BillApi
+    environment:
+      MongoSettings__ConnectionString: mongodb://bill:123456@db:27017
+      MongoSettings__Database: bill
+      # Configuración SMTP mediante archivo .env en la raíz
+      EmailConfiguration__Host: ${SMTP_HOST}
+      EmailConfiguration__Port: ${SMTP_PORT}
+      EmailConfiguration__Username: ${SMTP_USERNAME}
+      EmailConfiguration__Password: ${SMTP_PASSWORD}
+      EmailConfiguration__From: ${SMTP_FROM:-}
+    ports:
+      - "5080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
+    build:
+      context: ./web
+      args:
+        VITE_API_URL: ${VITE_API_URL:-http://localhost:5080}
+    ports:
+      - "5173:80"
+    depends_on:
+      - api
+
+volumes:
+  mongo-data:

@@ -15,4 +15,9 @@ class ApiService extends AbstractApiService {
       Options? options}) async {
     return await dio.get(path, queryParameters: data, options: options);
   }
+
+  @override
+  Future<Response> post({required String path, Options? options}) async {
+    return await dio.post(path, options: options);
+  }
 }

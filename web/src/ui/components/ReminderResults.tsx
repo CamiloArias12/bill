@@ -1,33 +1,50 @@
 import { ReminderResult } from "../../utils/types";
-import { findStatus } from "../../utils/status";
+import StatusBadge from "./StatusBadge";
 
 type Props = {
   results: ReminderResult[];
+  onClose: () => void;
 };
 
-const ReminderResults = ({ results }: Props) => {
+const ReminderResults = ({ results, onClose }: Props) => {
   const updated = results.flatMap((r) => r.updated.map((u) => ({ ...u, clientName: r.clientName })));
   const failed = results.flatMap((r) => r.failedBillCodes);
 
   return (
-    <div className="bg-white rounded-lg p-4 shadow-sm text-sm">
-      <p className="font-bold mb-2">
-        Resultado del proceso: {updated.length} facturas actualizadas
-        {failed.length > 0 && <span className="text-red-700">, {failed.length} con error de envío</span>}
-      </p>
-      {updated.length === 0 && <p className="text-gray-500">No había facturas en recordatorio.</p>}
-      <ul className="space-y-1">
-        {updated.map((u) => (
-          <li key={u.billCode}>
-            {u.billCode} ({u.clientName}): {findStatus(u.previousStatus)?.label} → {findStatus(u.newStatus)?.label}
-          </li>
-        ))}
-        {failed.map((code) => (
-          <li key={code} className="text-red-700">
-            {code}: no se pudo enviar el correo, el estado no cambió
-          </li>
-        ))}
-      </ul>
+    <div className="rounded-xl border border-emerald-200 bg-emerald-50/60 p-5">
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <p className="font-semibold text-emerald-900">
+            {updated.length === 0
+              ? "No había facturas en recordatorio"
+              : `Se notificaron ${updated.length} facturas`}
+          </p>
+          {failed.length > 0 && (
+            <p className="mt-1 text-sm text-rose-700">
+              {failed.length} correos no se pudieron enviar ({failed.join(", ")}); su estado no cambió.
+            </p>
+          )}
+        </div>
+        <button className="text-sm text-emerald-800 hover:underline" onClick={onClose}>
+          Cerrar
+        </button>
+      </div>
+      {updated.length > 0 && (
+        <ul className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+          {updated.map((u) => (
+            <li key={u.billCode} className="rounded-lg bg-white px-3 py-2 text-sm shadow-sm">
+              <p className="font-medium">
+                {u.billCode} <span className="font-normal text-slate-500">· {u.clientName}</span>
+              </p>
+              <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
+                <StatusBadge value={u.previousStatus} />
+                <span className="text-slate-400">→</span>
+                <StatusBadge value={u.newStatus} />
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };
