@@ -56,7 +56,7 @@ sequenceDiagram
         alt correo enviado
             S->>R: UpdateStatus(nuevo estado)
         else falla el envío
-            S->>S: Se reporta en failedBillCodes; el estado no cambia
+            S->>S: Se reporta en failedBillCodes (el estado no cambia)
         end
     end
     S-->>UI: Resultado por cliente (actualizadas / fallidas)
