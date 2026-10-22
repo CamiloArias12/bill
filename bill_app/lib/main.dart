@@ -5,10 +5,12 @@ import 'package:bill_app/service_locator.dart';
 import 'package:bill_app/ui/pages/bill_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get_it/get_it.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: "lib/config/.env", isOptional: true);
   await serviceLocatorSetup();
   runApp(AppManager());
 }
